@@ -50,4 +50,4 @@ ENV PORT=8000
 ENV MIX_ENV=prod
 
 # Run the application
-CMD ["./entrypoint.sh", "run"]
+CMD ["./bin/skryt", "foreground"]
