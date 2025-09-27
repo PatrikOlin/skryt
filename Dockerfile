@@ -18,10 +18,6 @@ COPY test/ ./test/
 # Build the project
 RUN gleam export erlang-shipment
 
-# Debug: List what was built
-RUN find /app/build/erlang-shipment -type f -name "*.beam" | head -20
-RUN ls -la /app/build/erlang-shipment/
-
 # Runtime stage
 FROM erlang:27-alpine AS runtime
 
@@ -40,16 +36,16 @@ WORKDIR /app
 # Copy the built application from builder stage
 COPY --from=builder --chown=app:app /app/build/erlang-shipment/ ./
 
-# Debug: Check what we copied
-RUN ls -la /app/
-RUN find /app -name "*.beam" | head -10
-RUN cat /app/entrypoint.sh || echo "No entrypoint.sh found"
+# Create custom entrypoint script (as root, before switching to app user)
+RUN echo '#!/bin/sh' > /app/custom_entrypoint.sh && \
+    echo 'set -eu' >> /app/custom_entrypoint.sh && \
+    echo 'BASE=$(dirname "$0")' >> /app/custom_entrypoint.sh && \
+    echo 'exec erl -pa "$BASE"/*/ebin -eval "skryt@main:main()." -noshell' >> /app/custom_entrypoint.sh && \
+    chmod +x /app/custom_entrypoint.sh && \
+    chown app:app /app/custom_entrypoint.sh
 
 # Create data directory for SQLite
 RUN mkdir -p /app/data && chown app:app /app/data
-
-RUN echo '#!/bin/sh\nset -eu\nBASE=$(dirname "$0")\nexec erl -pa "$BASE"/*/ebin -eval "skryt@main:main()." -noshell' > /app/custom_entrypoint.sh
-RUN chmod +x /app/custom_entrypoint.sh
 
 # Switch to app user
 USER app
@@ -60,6 +56,6 @@ EXPOSE 8000
 # Set environment variables
 ENV PORT=8000
 
-# Use the original entrypoint
+# Use the custom entrypoint
 ENTRYPOINT ["/app/custom_entrypoint.sh"]
 CMD []
