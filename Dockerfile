@@ -47,7 +47,6 @@ EXPOSE 8000
 
 # Set environment variables
 ENV PORT=8000
-ENV MIX_ENV=prod
 
 # Run the application
-CMD ["./bin/skryt", "foreground"]
+CMD ["./entrypoint.sh", "start"]
