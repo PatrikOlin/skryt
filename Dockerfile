@@ -37,12 +37,7 @@ WORKDIR /app
 COPY --from=builder --chown=app:app /app/build/erlang-shipment/ ./
 
 # Create custom entrypoint script (as root, before switching to app user)
-RUN echo '#!/bin/sh' > /app/custom_entrypoint.sh && \
-    echo 'set -eu' >> /app/custom_entrypoint.sh && \
-    echo 'BASE=$(dirname "$0")' >> /app/custom_entrypoint.sh && \
-    echo 'erl -pa "$BASE"/*/ebin' >> /app/custom_entrypoint.sh && \
-    chmod +x /app/custom_entrypoint.sh && \
-    chown app:app /app/custom_entrypoint.sh
+RUN sed -i 's/skryt@@main:run(skryt)/skryt@@main:main()/g' /app/entrypoint.sh
 
 # Create data directory for SQLite
 RUN mkdir -p /app/data && chown app:app /app/data
@@ -62,5 +57,5 @@ EXPOSE 8000
 ENV PORT=8000
 
 # Use the custom entrypoint
-ENTRYPOINT ["/app/custom_entrypoint.sh"]
-CMD []
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["run"]
