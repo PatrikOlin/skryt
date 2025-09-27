@@ -40,12 +40,16 @@ COPY --from=builder --chown=app:app /app/build/erlang-shipment/ ./
 RUN echo '#!/bin/sh' > /app/custom_entrypoint.sh && \
     echo 'set -eu' >> /app/custom_entrypoint.sh && \
     echo 'BASE=$(dirname "$0")' >> /app/custom_entrypoint.sh && \
-    echo 'exec erl -pa "$BASE"/*/ebin -eval "skryt@main:main()." -noshell' >> /app/custom_entrypoint.sh && \
+    echo 'erl -pa "$BASE"/*/ebin' >> /app/custom_entrypoint.sh && \
     chmod +x /app/custom_entrypoint.sh && \
     chown app:app /app/custom_entrypoint.sh
 
 # Create data directory for SQLite
 RUN mkdir -p /app/data && chown app:app /app/data
+
+# Add this debug step before USER app
+RUN find /app/skryt -name "*.beam" -ls
+RUN ls -la /app/skryt/ebin/ || echo "No skryt/ebin directory"
 
 # Switch to app user
 USER app
