@@ -48,6 +48,9 @@ RUN cat /app/entrypoint.sh || echo "No entrypoint.sh found"
 # Create data directory for SQLite
 RUN mkdir -p /app/data && chown app:app /app/data
 
+RUN echo '#!/bin/sh\nset -eu\nBASE=$(dirname "$0")\nexec erl -pa "$BASE"/*/ebin -eval "skryt@main:main()." -noshell' > /app/custom_entrypoint.sh
+RUN chmod +x /app/custom_entrypoint.sh
+
 # Switch to app user
 USER app
 
@@ -58,5 +61,5 @@ EXPOSE 8000
 ENV PORT=8000
 
 # Use the original entrypoint
-ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["run"]
+ENTRYPOINT ["/app/custom_entrypoint.sh"]
+CMD []
