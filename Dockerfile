@@ -48,8 +48,9 @@ RUN echo '#!/bin/sh' > /app/custom_entrypoint.sh && \
 RUN mkdir -p /app/data && chown app:app /app/data
 
 # Add this debug step before USER app
-RUN find /app/skryt -name "*.beam" -ls
+RUN find /app/skryt -name "*.beam"
 RUN ls -la /app/skryt/ebin/ || echo "No skryt/ebin directory"
+RUN ls -la /app/skryt/ || echo "No skryt directory"
 
 # Switch to app user
 USER app
