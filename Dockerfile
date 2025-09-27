@@ -1,5 +1,5 @@
 # Build stage
-FROM ghcr.io/gleam-lang/gleam:v1.6.2-erlang-alpine AS builder
+FROM ghcr.io/gleam-lang/gleam:v1.12.0-erlang-alpine AS builder
 
 # Set working directory
 WORKDIR /app
