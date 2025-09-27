@@ -50,4 +50,4 @@ ENV PORT=8000
 ENV MIX_ENV=prod
 
 # Run the application
-CMD ["./entrypoint.sh", "run"]
+CMD ["erl", "-noshell", "-pa", "./lib/*/ebin", "-eval", "skryt@main:main().", "-s", "init", "stop"]
