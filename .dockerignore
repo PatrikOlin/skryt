@@ -1,0 +1,24 @@
+# Gleam build artifacts
+build/
+.gleam/
+
+# Development files
+.git/
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local data
+data/
+*.db
