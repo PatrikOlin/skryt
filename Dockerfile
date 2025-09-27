@@ -1,6 +1,12 @@
 # Build stage
 FROM ghcr.io/gleam-lang/gleam:v1.12.0-erlang-alpine AS builder
 
+# Install build dependencies for native compilation
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    make
+
 # Set working directory
 WORKDIR /app
 
