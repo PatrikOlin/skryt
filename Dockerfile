@@ -18,10 +18,6 @@ COPY test/ ./test/
 # Build the project
 RUN gleam export erlang-shipment
 
-# Debug: List what was built
-RUN find /app/build/erlang-shipment -type f -name "*.beam" | head -20
-RUN ls -la /app/build/erlang-shipment/
-
 # Runtime stage
 FROM erlang:27-alpine AS runtime
 
@@ -40,11 +36,6 @@ WORKDIR /app
 # Copy the built application from builder stage
 COPY --from=builder --chown=app:app /app/build/erlang-shipment/ ./
 
-# Debug: Check what we copied
-RUN ls -la /app/
-RUN find /app -name "*.beam" | head -10
-RUN cat /app/entrypoint.sh || echo "No entrypoint.sh found"
-
 # Create data directory for SQLite
 RUN mkdir -p /app/data && chown app:app /app/data
 
@@ -56,7 +47,7 @@ EXPOSE 8000
 
 # Set environment variables
 ENV PORT=8000
+ENV MIX_ENV=prod
 
-# Use the original entrypoint
-ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["run"]
+# Run the application
+CMD ["./entrypoint.sh", "run"]
