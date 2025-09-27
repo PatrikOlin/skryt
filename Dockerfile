@@ -49,4 +49,4 @@ EXPOSE 8000
 ENV PORT=8000
 
 # Run the application
-CMD ["./entrypoint.sh", "start"]
+CMD ["./entrypoint.sh", "run"]
