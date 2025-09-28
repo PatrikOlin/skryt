@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: Sixtyfour;
+    font-style: normal;
+    font-weight: 200 700;
+    font-display: swap;
+    src: url("/static/fonts/Sixtyfour-Regular-VariableFont.ttf")
+        format("truetype");
+}
+
+@theme {
+    --font-heading: "Sixtyfour", sans-serif;
+
+    /* colors */
+    --color-primary: rgb(255, 168, 154);
+}

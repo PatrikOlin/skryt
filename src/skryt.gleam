@@ -16,7 +16,8 @@ pub fn main() {
   case connection.setup() {
     Ok(db) -> {
       // create context with db connection
-      let context = web.Context(db: db, api_key: None)
+      let context =
+        web.Context(db: db, api_key: None, static_directory: static_directory())
 
       // partially apply the context to the router
       let handler = fn(req) {
@@ -37,4 +38,9 @@ pub fn main() {
       wisp.log_critical("Failed to set up database: " <> string.inspect(e))
     }
   }
+}
+
+pub fn static_directory() {
+  let assert Ok(priv_directory) = wisp.priv_directory("skryt")
+  priv_directory <> "/static"
 }

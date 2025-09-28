@@ -166,7 +166,12 @@ pub fn get_top_scores(
       expecting: score_decoder(),
     )
   {
-    Ok(scores) -> Ok(scores)
+    Ok(scores) -> {
+      io.println(
+        "Retrieved " <> string.inspect(list.length(scores)) <> " top scores",
+      )
+      Ok(scores)
+    }
     Error(e) -> {
       io.println("Query failed: " <> e.message)
       Error(DatabaseError(e.message))

@@ -1,0 +1,23 @@
+meta {
+  name: Get scores
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/games/:game_id/scores
+  body: none
+  auth: inherit
+}
+
+params:path {
+  game_id: 
+}
+
+headers {
+  X-API-Key: 
+}
+
+settings {
+  encodeUrl: true
+}

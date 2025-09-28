@@ -61,6 +61,7 @@ fn run_initial_migrations(db: sqlight.Connection) -> Result(Nil, String) {
     "CREATE TABLE games (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
+      slug TEXT NOT NULL UNIQUE,
       api_key TEXT NOT NULL UNIQUE,
       created_at INTEGER NOT NULL
     )",
@@ -73,6 +74,7 @@ fn run_initial_migrations(db: sqlight.Connection) -> Result(Nil, String) {
     FOREIGN KEY (game_id) REFERENCES games(id)
     )",
     "CREATE INDEX idx_scored_game_score ON scores(game_id, score DESC)",
+    "CREATE INDEX idx_games_slug ON games(slug)",
     "INSERT INTO schema_migrations (version) VALUES (1)",
   ]
 

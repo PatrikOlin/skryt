@@ -1,0 +1,28 @@
+{
+  "name": "skryt",
+  "version": "1.0.0",
+  "description": "[![Package Version](https://img.shields.io/hexpm/v/skryt)](https://hex.pm/packages/skryt) [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/skryt/)",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i assets/css/app.css -o priv/static/css/app.css --minify",
+    "watch:css": "npx @tailwindcss/cli -i assets/css/app.css -o priv/static/css/app.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PatrikOlin/skryt.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/PatrikOlin/skryt/issues"
+  },
+  "homepage": "https://github.com/PatrikOlin/skryt#readme",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.13"
+  }
+}

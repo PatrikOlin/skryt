@@ -1,0 +1,30 @@
+meta {
+  name: Create score
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/games/:game_id/scores
+  body: json
+  auth: inherit
+}
+
+params:path {
+  game_id: 
+}
+
+headers {
+  X-API-Key: 
+}
+
+body:json {
+  {
+    "player_name": "KUK",
+    "score": 1200
+  }
+}
+
+settings {
+  encodeUrl: true
+}

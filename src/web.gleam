@@ -6,7 +6,11 @@ import sqlight
 import wisp
 
 pub type Context {
-  Context(db: sqlight.Connection, api_key: Option(String))
+  Context(
+    db: sqlight.Connection,
+    api_key: Option(String),
+    static_directory: String,
+  )
 }
 
 pub fn middleware(
@@ -19,9 +23,15 @@ pub fn middleware(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use req <- wisp.csrf_known_header_protection(req)
+  use <- wisp.serve_static(req, under: "/static", from: ctx.static_directory)
 
   let api_key = extract_api_key_from_header(req)
-  let updated_ctx = Context(db: ctx.db, api_key: api_key)
+  let updated_ctx =
+    Context(
+      db: ctx.db,
+      api_key: api_key,
+      static_directory: ctx.static_directory,
+    )
 
   handle_request(req, updated_ctx)
 }

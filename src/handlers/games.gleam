@@ -4,6 +4,9 @@ import gleam/crypto
 import gleam/dynamic/decode
 import gleam/http.{Get, Post}
 import gleam/json
+import gleam/list
+import gleam/order
+import gleam/string
 import web
 import wisp.{type Request, type Response}
 import youid/uuid
@@ -49,30 +52,79 @@ fn create_game(req: Request, ctx: web.Context) -> Response {
   // Handle JSON decoding separately first
   case decode.run(json, create_game_decoder()) {
     Ok(game_request) -> {
+      let base_slug = generate_slug(game_request.name)
       let game_id = uuid.v4_string()
       let api_key =
         crypto.strong_random_bytes(32)
         |> bit_array.base64_encode(False)
 
       // Handle database operation separately
-      case games.create_game(ctx.db, game_id, game_request.name, api_key) {
-        Ok(game) -> {
-          let response_json =
-            json.object([
-              #("id", json.string(game.id)),
-              #("name", json.string(game.name)),
-              #("api_key", json.string(game.api_key)),
-            ])
-            |> json.to_string
+      case games.ensure_unique_slug(ctx.db, base_slug) {
+        Ok(unique_slug) -> {
+          case
+            games.create_game(
+              ctx.db,
+              game_id,
+              game_request.name,
+              unique_slug,
+              api_key,
+            )
+          {
+            Ok(game) -> {
+              let response_json =
+                json.object([
+                  #("id", json.string(game.id)),
+                  #("name", json.string(game.name)),
+                  #("slug", json.string(game.slug)),
+                  #("api_key", json.string(game.api_key)),
+                ])
+                |> json.to_string
 
-          wisp.json_response(response_json, 201)
+              wisp.json_response(response_json, 201)
+            }
+            Error(_) -> {
+              wisp.internal_server_error()
+              |> wisp.json_body("{\"error\": \"Failed to create game\"}")
+            }
+          }
         }
         Error(_) -> {
           wisp.internal_server_error()
-          |> wisp.json_body("{\"error\": \"Failed to create game\"}")
+          |> wisp.json_body("{\"error\": \"Failed to ensure unique slug\"}")
         }
       }
     }
     Error(_) -> wisp.unprocessable_content()
+  }
+}
+
+fn generate_slug(name: String) -> String {
+  name
+  |> string.lowercase()
+  |> string.replace(" ", "-")
+  |> string.replace("'", "")
+  |> string.replace("\"", "")
+  |> string.to_graphemes()
+  |> list.filter(fn(char) {
+    case char {
+      "-" -> True
+      _ -> is_alphanumeric(char)
+    }
+  })
+  |> string.join("")
+  |> string.replace("--", "-")
+  |> string.trim()
+}
+
+fn is_alphanumeric(char: String) -> Bool {
+  case string.compare(char, "a"), string.compare(char, "z") {
+    order.Lt, _ -> False
+    _, order.Gt -> False
+    _, _ -> True
+  }
+  || case string.compare(char, "0"), string.compare(char, "9") {
+    order.Lt, _ -> False
+    _, order.Gt -> False
+    _, _ -> True
   }
 }
