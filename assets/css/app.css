@@ -9,8 +9,17 @@
         format("truetype");
 }
 
+@font-face {
+    font-family: Jersey15;
+    font-style: normal;
+    font-weight: 200 700;
+    font-display: swap;
+    src: url("/static/fonts/Jersey15-Regular.ttf") format("truetype");
+}
+
 @theme {
     --font-heading: "Sixtyfour", sans-serif;
+    --font-body: "Jersey15", sans-serif;
 
     /* colors */
     --color-primary: rgb(255, 168, 154);
