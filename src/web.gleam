@@ -1,3 +1,5 @@
+import cors_builder as cors
+import gleam/http
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -24,6 +26,7 @@ pub fn middleware(
   use req <- wisp.handle_head(req)
   use req <- wisp.csrf_known_header_protection(req)
   use <- wisp.serve_static(req, under: "/static", from: ctx.static_directory)
+  use req <- cors.wisp_middleware(req, cors())
 
   let api_key = extract_api_key_from_header(req)
   let updated_ctx =
@@ -72,4 +75,15 @@ fn get_header_value(
     value
   })
   |> option.from_result()
+}
+
+fn cors() {
+  cors.new()
+  |> cors.allow_all_origins()
+  |> cors.allow_method(http.Get)
+  |> cors.allow_method(http.Post)
+  |> cors.allow_header("Content-Type")
+  |> cors.allow_header("X-API-Key")
+  |> cors.allow_header("Authorization")
+  |> cors.max_age(86_400)
 }
