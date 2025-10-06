@@ -24,7 +24,6 @@ pub fn middleware(
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
-  use req <- wisp.csrf_known_header_protection(req)
   use <- wisp.serve_static(req, under: "/static", from: ctx.static_directory)
   use req <- cors.wisp_middleware(req, cors())
 
